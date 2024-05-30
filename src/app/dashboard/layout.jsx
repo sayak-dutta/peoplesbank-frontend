@@ -1,31 +1,36 @@
-import { Layout, Menu } from "antd";
-import Link from "next/link";
+import Sidebar from "@/component/layout/sidebar";
+import { Layout, Menu, Typography } from "antd";
+import { Content, Footer, Header } from "antd/es/layout/layout";
+import MenuItem from "antd/es/menu/MenuItem";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 
-const { Header, Content, Footer } = Layout;
 
-const MyLayout = ({ children }) => {
+const MyLayout = async ({ children }) => {
+	const session = await getServerSession()
+	if(!session){
+		redirect('/auth')
+	}
 	return (
 		<Layout>
 			<Header>
 				<div className="logo" />
-				<Menu theme="dark" mode="horizontal" defaultSelectedKeys={["1"]}>
-					<Menu.Item key="1">
-						<Link href="/">Home</Link>
-					</Menu.Item>
-					<Menu.Item key="2">
-						<Link href="/accounts">Accounts</Link>
-					</Menu.Item>
-					<Menu.Item key="3">
-						<Link href="/transactions">Transactions</Link>
-					</Menu.Item>
+				<Menu theme="dark" mode="horizontal">
+					<MenuItem key="1" className="fs-2">
+						 Peoples Bank 
+					</MenuItem>
 				</Menu>
 			</Header>
-			<Content style={{ padding: "0 50px" }}>
-				<div className="site-layout-content">{children}</div>
-			</Content>
-			<Footer style={{ textAlign: "center" }}>Banking App ©2024 Created by Your Name</Footer>
+			<Layout style={{minHeight:'90vh'}}>
+				<Sidebar/>
+				<Content style={{ padding: "15px 15px" }}>
+					<div className="site-layout-content">{children}</div>
+				</Content>
+			</Layout>
+			<Footer style={{ textAlign: "center" , padding:"0 0" }}> <p className="py-1"> Banking App ©2024 Created by Your Name </p></Footer>
 		</Layout>
 	);
 };
 
 export default MyLayout;
+
