@@ -1,8 +1,9 @@
+import Dashboard from "@/component/page/dashboard"
 
 
 function Page() {
   return (
-    <div>Home Dashboard</div>
+    <Dashboard />
   )
 }
 
