@@ -1,5 +1,6 @@
 'use client'
-import { Button, Card, Col, Form, Input, Modal, Popconfirm, Row, Table } from 'antd'
+import { addBeneficiaries, getBeneficiarieByCustId } from '@/axios/apiendpoints'
+import { Button, Card, Col, Form, Input, Modal, Popconfirm, Row, Table, message } from 'antd'
 import React, { useEffect, useState } from 'react'
 
 function Pag() {
@@ -34,16 +35,7 @@ function Pag() {
       ),
     },
   ])
-  const [dataSource, setDataSource] = useState([ // Replace with your actual data
-  {
-    key: '1',
-    name: 'John Doe',
-  },
-  {
-    key: '2',
-    name: 'Jane Smith',
-  },
-  ])
+  const [dataSource, setDataSource] = useState([])
   const handleEdit = (key) => {
     setId(key)
     setModal(i=>!i)
@@ -54,6 +46,17 @@ function Pag() {
     // Implement your delete logic here, passing the key or beneficiary data
     console.log('Delete beneficiary with key:', key);
   };
+  const getBeneficery=async()=>{
+    getBeneficiarieByCustId().then(r=>{
+      setDataSource([])
+    }).catch(err=>{
+      message.error(err?.message)
+    })
+  }
+  useEffect(() => {
+    getBeneficery()
+  }, [])
+  
   return (
     <Row justify={'center'} >
         <Col xs={24} sm={24} md={22} lg={22}>
@@ -77,12 +80,21 @@ function Pag() {
 
 export default Pag
 
-const AddBeneficiaryForm = ({id=null}) => {
+const AddBeneficiaryForm = ({id=null,cb=()=>{}}) => {
+  const [FLoading, setFLoading] = useState(false)
   const [form] = Form.useForm();
 
   const onFinish = (values) => {
-    console.log('Success:', values);
-    // Handle form submission logic here (e.g., send beneficiary data to server)
+    setFLoading(true);
+    addBeneficiaries(values).then(r=>{
+      setFLoading(false)
+      if(r.status){
+
+      }
+    }).catch(err=>{
+      setFLoading(false)
+      message.error(err?.message)
+    })
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -100,10 +112,10 @@ const AddBeneficiaryForm = ({id=null}) => {
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
     >
-      <Form.Item label="Beneficiary Name" name={"bname"} required>
+      <Form.Item label="Beneficiary Name" name={"name"} required>
         <Input placeholder="Enter beneficiary name" />
       </Form.Item>
-      <Form.Item label="Account Number" required>
+      <Form.Item label="Account Number" name={"accountNumber"} required>
         <Input placeholder="Enter account number" />
       </Form.Item>
       <Form.Item label="IFSC Code" required>
@@ -113,7 +125,7 @@ const AddBeneficiaryForm = ({id=null}) => {
         <Input placeholder="Enter bank name" />
       </Form.Item>
       <Form.Item>
-        <Button type='primary' block htmlType="submit">
+        <Button type='primary' block htmlType="submit" loading={FLoading} >
           Add Beneficiary
         </Button>
       </Form.Item>

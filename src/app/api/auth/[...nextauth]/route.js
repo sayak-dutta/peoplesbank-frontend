@@ -1,5 +1,5 @@
 
-import { loginRequest } from "@/axiso/apiendpoints";
+import { loginRequest } from "@/axios/apiendpoints";
 import NextAuth from "next-auth/next";
 import Credentials from "next-auth/providers/credentials";
 
@@ -13,8 +13,8 @@ export const handler = NextAuth({
         authorize: async (credentials) => {
             let user = null;
             const { email, password } = await credentials;
-            let request = loginRequest(email,password)
-            
+            // let request = loginRequest(email,password)
+            // user = {email:request.email,name:request.id}
             if (!email) {
               throw new Error("User not found.");
             }
