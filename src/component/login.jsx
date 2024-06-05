@@ -2,20 +2,26 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, Card, message } from 'antd';
 import { signIn } from "next-auth/react"
-import { createAccounts, loginRequest, signupRequest } from '@/axios/apiendpoints';
+import { createAccounts, getBeneficiarieByCustId, loginRequest, signupRequest } from '@/axios/apiendpoints';
 import { uuid } from 'uuidv4';
+import axios from 'axios';
 
 const Login = () => {
   const [isSignup, setIsSignup] = useState(false); // State for signup/signin toggle
 
   const handleSubmit = async (values) => {
     const { email, password } = values;
-    // let data = await isSignup? signupRequest(values): loginRequest(values)
+    let a =  isSignup? await signupRequest(values): await loginRequest(values)
     //create Account Now
     //let account = await createAccounts({accountNumber:Math.floor(Math.random()*10000000000),balance:0})
+    if(a.status !==200){
+      message.error(a?.message)
+      return
+    }
+    console.log(a.data);
     const result = await signIn('credentials', {
-        email,
-        password,
+        email:a.data.email,
+        password:a.data.id,
         callbackUrl:'/dashboard'
       });                            
       if (!result.error) {

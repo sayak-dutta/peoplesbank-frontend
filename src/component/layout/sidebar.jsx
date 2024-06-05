@@ -1,10 +1,11 @@
 "use client"
-import { AppstoreAddOutlined, SettingOutlined, TransactionOutlined, UserOutlined, UsergroupAddOutlined } from '@ant-design/icons';
+import { AppstoreAddOutlined, LockOutlined, SettingOutlined, TransactionOutlined, UnlockOutlined, UserOutlined, UsergroupAddOutlined } from '@ant-design/icons';
 import Icon from '@ant-design/icons/lib/components/Icon';
 import { Layout, Menu, theme } from 'antd'
 import Link from 'next/link';
 import React, { useState } from 'react'
 import { NextLinkCB } from './routeloader';
+import { signOut } from 'next-auth/react';
 
 function Sidebar() {
     const [collapsed, setCollapsed] = useState(false);
@@ -59,7 +60,12 @@ const items = [
   {
     key: 'support',
     label: <Link href="/dashboard/support">Support</Link>,
-    icon: <UsergroupAddOutlined />,
+    icon: <UsergroupAddOutlined />
+  },
+  {
+    key: 'logout',
+    label: <Link href="#" onClick={signOut}>Log out</Link>,
+    icon: <UnlockOutlined />,
   },
 ];
 

@@ -1,17 +1,25 @@
 "use client"
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card, List, Icon, Typography, Row, Col, Table, Form, Input, Button } from 'antd';
 import { BankFilled, BankOutlined, CarOutlined, CreditCardOutlined } from '@ant-design/icons';
 import Link from 'next/link';
+import { getSession } from 'next-auth/react';
 
 const Dashboard = () => {
   const accountsData = [
-    { title: 'Checking Account', balance: '$10,000', icon: <BankOutlined /> },
-    { title: 'Savings Account', balance: '$5,000', icon: <BankFilled /> },
-    { title: 'Credit Card', balance: '$5,000', icon: <CreditCardOutlined /> },
+    {key:1, title: 'Checking Account', balance: '$10,000', icon: <BankOutlined /> },
+    {key:2, title: 'Savings Account', balance: '$5,000', icon: <BankFilled /> },
+    {key:3, title: 'Credit Card', balance: '$5,000', icon: <CreditCardOutlined /> },
   ];
 
-
+  useEffect(() => {
+    getSession().then(r=>{
+      console.log(r);
+    }).catch(r=>{
+      console.log(r);
+    })
+  }, [])
+  
   return (
     <div className='p-2 p-md-2'>
     <div className="dashboard">      
@@ -22,7 +30,7 @@ const Dashboard = () => {
               }}
           dataSource={accountsData}
           renderItem={(item) => (
-            <List.Item>
+            <List.Item key={item.key}>
                 <Card title={item.title} actions={["Ava"]}>
                     <List.Item.Meta
                         avatar={item.icon}
@@ -88,11 +96,13 @@ export const columns = [
   
   const dataSource = [ // Replace with your actual data
     {
+      key:1,
       date: '2024-05-30',
       description: 'Salary deposit',
       amount: 2000,
     },
     {
+      key:2,
       date: '2024-05-28',
       description: 'Grocery shopping',
       amount: -50.25,

@@ -11,10 +11,9 @@ const getSessionCache= async()=>{
     user = tmp.user
     return tmp.user
 }
-export const loginRequest =async(email,password)=>{
+export const loginRequest =async(email)=>{
     try{
-        return instance.post("",{email,password}).then(r=>{
-        console.log(r);
+        return instance.post("/customers/login",email).then(r=>{
         return r.data
       }).catch(r=>{
         return r.response.data
@@ -23,10 +22,9 @@ export const loginRequest =async(email,password)=>{
         return {code:0,message:err.message}
     }
 }
-export const signupRequest =async(email,password,name)=>{
+export const signupRequest =async(email )=>{
   try{
-      return instance.post("/customers",{email,password,name}).then(r=>{
-      console.log(r);
+      return instance.post("/customers",email).then(r=>{
       return r.data
     }).catch(r=>{
       return r.response.data
@@ -96,10 +94,10 @@ export const addBeneficiaries =async(accounts)=>{
   }
 
 }
-export const getBeneficiarieByCustId =async()=>{
+export const getBeneficiarieByCustId =async(id)=>{
   try{
       let user = await getSessionCache()
-      return instance("/beneficiaries/"+user.name).then(r=>{
+      return instance("/beneficiaries/"+id).then(r=>{
       return r.data
     }).catch(r=>{
       return r.response.data

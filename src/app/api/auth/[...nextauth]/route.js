@@ -20,7 +20,7 @@ export const handler = NextAuth({
             }
     
             // Return user object with profile data
-            return {email,name:""};
+            return {email,name:password};
         },
       }),
     ],
