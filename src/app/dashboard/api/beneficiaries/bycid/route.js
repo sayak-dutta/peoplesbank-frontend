@@ -6,7 +6,7 @@ export async function GET(request,context) {
         //const custId = request.nextUrl.searchParams.get("cid")
         
         const data = await getBeneficiarieByCustId();
-       return NextResponse.json({code:200})        
+        return NextResponse.json({code:200})        
     } catch (error) {
         return NextResponse.json({code:400})
         

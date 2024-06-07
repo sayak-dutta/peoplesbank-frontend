@@ -1,6 +1,7 @@
 'use client'
-import { addBeneficiaries, getBeneficiarieByCustId } from '@/axios/apiendpoints'
-import { Button, Card, Col, Form, Input, Modal, Popconfirm, Row, Table, message } from 'antd'
+import { addBeneficiaries, deleteBeneficiaries, editBeneficiaries, getBeneficiarieByCustId } from '@/axios/apiendpoints'
+import { EyeOutlined, EyeInvisibleOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Button, Card, Col, Form, Input, Modal, Popconfirm, Row, Table, Tooltip, message } from 'antd'
 import React, { useEffect, useState } from 'react'
 
 function Pag() {
@@ -14,96 +15,139 @@ function Pag() {
       key: 'name',
     },
     {
+      title: 'Account no',
+      dataIndex: 'accountNumber',
+      key: 'account',
+      render: (i) => (<SecretView secret={i} />)
+    },
+    {
+      title: 'IFSC',
+      dataIndex: 'ifscCode',
+      key: 'ifsc',
+    },
+
+    {
       title: 'Action',
       dataIndex: '',
       key: 'action',
       render: (record) => (
         <>
-          <Button type="link" onClick={() => handleEdit(record.key)}>
+          <Button type="link" onClick={() => handleEdit(record)}>
             Edit
           </Button>
           <Popconfirm
             title="Are you sure you want to delete this beneficiary?"
-            onConfirm={() => handleDelete(record.key)}
+            onConfirm={() => handleDelete(record.id)}
             onCancel={() => console.log('Cancel')}
           >
-            <Button type="link" danger>
-              Delete
-            </Button>
+            <Tooltip title="delete">
+
+            <Button type="link" icon={<DeleteOutlined/>} danger/>
+            </Tooltip>
           </Popconfirm>
         </>
       ),
     },
   ])
   const [dataSource, setDataSource] = useState([])
-  const handleEdit = (key) => {
-    setId(key)
-    setModal(i=>!i)
-    console.log('Edit beneficiary with key:', key);
+  const handleEdit = (e) => {
+    setId(e)
+    setModal(i => !i)
+    console.log('Edit beneficiary with key:', e);
+
   };
 
   const handleDelete = (key) => {
     // Implement your delete logic here, passing the key or beneficiary data
-    console.log('Delete beneficiary with key:', key);
+    deleteBeneficiaries(key).then(r=>{
+      console.log(r.data);
+    })
+    console.log('Delete beneficiary with', key);
   };
-  const getBeneficery=async()=>{
-    getBeneficiarieByCustId().then(r=>{
-      setDataSource([])
-    }).catch(err=>{
+
+
+  const getBeneficery = async () => {
+    getBeneficiarieByCustId().then(r => {
+      console.log(r.data);
+      setDataSource(r.data)
+    }).catch(err => {
       message.error(err?.message)
     })
   }
   useEffect(() => {
     getBeneficery()
   }, [])
-  
+
   return (
     <Row justify={'center'} >
-        <Col xs={24} sm={24} md={22} lg={22}>
-          <Card
-            title={"Beneficiary"}
-            extra={<Button onClick={()=>setOpen(i=>!i)} type='default'>Add Beneficiary</Button> }
-            styles={{body:{padding:0}}}
-          >
-              <Table columns={column} dataSource={dataSource} pagination={false} />
-          </Card>
-          <Modal footer={null} open={open} onCancel={()=>{setOpen(i=>!i)}}>
-            <AddBeneficiaryForm />
-          </Modal>
-          <Modal footer={null} open={modal} onCancel={()=>{setModal(i=>!i)}}>
-            <AddBeneficiaryForm id={id} />
-          </Modal>
-        </Col>
+      <Col xs={24} sm={24} md={22} lg={22}>
+        <Card
+          title={"Beneficiary"}
+          extra={<Button onClick={() => setOpen(i => !i)} type='default'>Add Beneficiary</Button>}
+          styles={{ body: { padding: 0 } }}
+        >
+          <Table columns={column} dataSource={dataSource} pagination={false} />
+        </Card>
+        <Modal footer={null} open={open} onCancel={() => { setOpen(i => !i), setId(null) }}>
+          <AddBeneficiaryForm id={id} />
+        </Modal>
+        <Modal footer={null} open={modal} onCancel={() => { setModal(i => !i), setId(null) }}>
+          <AddBeneficiaryForm cb={getBeneficery} id={id} />
+        </Modal>
+      </Col>
     </Row>
   )
 }
 
 export default Pag
 
-const AddBeneficiaryForm = ({id=null,cb=()=>{}}) => {
+const AddBeneficiaryForm = ({ id, cb = () => { } }) => {
   const [FLoading, setFLoading] = useState(false)
   const [form] = Form.useForm();
-
+  console.log("hello,", id);
   const onFinish = (values) => {
-    setFLoading(true);
-    addBeneficiaries(values).then(r=>{
-      setFLoading(false)
-      if(r.status){
 
-      }
-    }).catch(err=>{
-      setFLoading(false)
-      message.error(err?.message)
-    })
+    setFLoading(true);
+
+    if (id) {
+      editBeneficiaries(values,id.id).then(r => {
+        setFLoading(false)
+        if (r.status) {
+          values
+          cb()
+        }
+      },
+        form.resetFields()
+      ).catch(err => {
+        setFLoading(false)
+        message.error(err?.message)
+      })
+    }
+    else {
+      addBeneficiaries(values).then(r => {
+        setFLoading(false)
+        if (r.status) {
+          values
+          cb()
+        }
+      },
+        form.resetFields()
+      ).catch(err => {
+        setFLoading(false)
+        message.error(err?.message)
+      })
+    }
   };
 
   const onFinishFailed = (errorInfo) => {
     console.log('Failed:', errorInfo);
   };
 
-  useEffect(()=>{
-    form.setFieldsValue({bname:id})
-  },[id])
+  useEffect(() => {
+    if (id) {
+      form.setFieldsValue({ "name": id.name, "accountNumber": id.accountNumber, "ifscCode": id.ifscCode })
+    }
+  }, [id])
 
   return (
     <Form
@@ -118,17 +162,34 @@ const AddBeneficiaryForm = ({id=null,cb=()=>{}}) => {
       <Form.Item label="Account Number" name={"accountNumber"} required>
         <Input placeholder="Enter account number" />
       </Form.Item>
-      <Form.Item label="IFSC Code" required>
+      <Form.Item label="IFSC Code" name={"ifscCode"} required>
         <Input placeholder="Enter IFSC code" />
-      </Form.Item>
-      <Form.Item label="Bank Name" required>
-        <Input placeholder="Enter bank name" />
       </Form.Item>
       <Form.Item>
         <Button type='primary' block htmlType="submit" loading={FLoading} >
-          Add Beneficiary
+          {id ? "Edit Beneficiary" : "Add Beneficiary"}
         </Button>
       </Form.Item>
     </Form>
   );
 };
+
+export const SecretView = ({ secret,extra=null }) => {
+  const [isRevealed, setIsRevealed] = useState(false);
+
+  const toggleReveal = () => setIsRevealed(!isRevealed);
+
+  const maskedSecret = secret.substr(0, 2) + secret.substr(secret.length - 4).replace(/./g, 'X') + secret.substr(secret.length - 2); // Mask all characters with 'x'
+
+  const secretContent = isRevealed ? secret : maskedSecret;
+
+  return (
+    <div className="secret-view">
+      <span className="secret-content">{extra} {secretContent}</span>
+      <Button type="link" onClick={toggleReveal}>
+        {isRevealed ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+      </Button>
+    </div>
+  );
+};
+
