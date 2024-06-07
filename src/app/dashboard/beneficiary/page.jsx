@@ -104,7 +104,7 @@ export default Pag
 const AddBeneficiaryForm = ({ id, cb = () => { } }) => {
   const [FLoading, setFLoading] = useState(false)
   const [form] = Form.useForm();
-  console.log("hello,", id);
+
   const onFinish = (values) => {
 
     setFLoading(true);
@@ -114,6 +114,7 @@ const AddBeneficiaryForm = ({ id, cb = () => { } }) => {
         setFLoading(false)
         if (r.status) {
           values
+          
           cb()
         }
       },
@@ -179,7 +180,7 @@ export const SecretView = ({ secret,extra=null }) => {
 
   const toggleReveal = () => setIsRevealed(!isRevealed);
 
-  const maskedSecret = secret.substr(0, 2) + secret.substr(secret.length - 4).replace(/./g, 'X') + secret.substr(secret.length - 2); // Mask all characters with 'x'
+  const maskedSecret = secret?.substr(0, 2) + secret?.substr(secret?.length - 4).replace(/./g, 'X') + secret?.substr(secret?.length - 2); // Mask all characters with 'x'
 
   const secretContent = isRevealed ? secret : maskedSecret;
 

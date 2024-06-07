@@ -3,12 +3,14 @@ import { AppstoreAddOutlined, LockOutlined, SettingOutlined, TransactionOutlined
 import Icon from '@ant-design/icons/lib/components/Icon';
 import { Layout, Menu, theme } from 'antd'
 import Link from 'next/link';
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { NextLinkCB } from './routeloader';
 import { signOut } from 'next-auth/react';
+import { usePathname, useRouter } from 'next/navigation';
 
 function Sidebar() {
     const [collapsed, setCollapsed] = useState(false);
+    
   
   return (
     <Layout.Sider
@@ -43,7 +45,7 @@ const items = [
     icon: <AppstoreAddOutlined />,
   },
   {
-    key: 'accounts',
+    key: 'beneficiary',
     label: <NextLinkCB href="/dashboard/beneficiary">Beneficiary</NextLinkCB>,
     icon: <UserOutlined />,
   },
@@ -70,10 +72,21 @@ const items = [
 ];
 
 const AntdMenu = () => {
+  var pathname = usePathname()
+
+    // Use useMemo to efficiently extract the active key
+    const activeKey = useMemo(() => {
+      // Extract the relevant part of the path (e.g., /dashboard/beneficiary becomes 'transactions')
+      const pathSegments = pathname.split('/');
+      return pathSegments[pathSegments.length - 1]; // Get the last segment
+    }, [pathname]);
+    console.log(activeKey)
+    
   return (
     <Menu
       theme="dark" 
       defaultSelectedKeys={['dashboard']} // Set dashboard as default selected
+      selectedKeys={[activeKey]}
       mode="inline" // For vertical menu (change to 'horizontal' for horizontal)
       items={items}
     />

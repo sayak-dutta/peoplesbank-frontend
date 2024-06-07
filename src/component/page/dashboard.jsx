@@ -19,7 +19,7 @@ const Dashboard = () => {
   const [beneficiarylist, setBeneficiarylist] = useState([])
   const [transactionList, setTransactionList] = useState([])
   const [transactionsAccountId, setTransactionsAccountId] = useState(-1)
-  const getBeneficiary = async()=>{
+  const getBeneficiary = async () => {
     getBeneficiarieByCustId().then(r => {
       if (r.status === 200 || r.status === 201) {
         setBeneficiarylist(r.data)
@@ -28,10 +28,10 @@ const Dashboard = () => {
 
     })
   }
-  const getTransacyion= async (hard=false) => {
-    getTransactionByCustId(transactionsAccountId,hard).then(r => {
+  const getTransacyion = async (hard = false) => {
+    getTransactionByCustId(transactionsAccountId, hard).then(r => {
       if (r.status === 200 || r.status === 201) {
-        setTransactionList(r.data.map(i=>({...i,bname:i?.beneficiary?.name,accountType:i.account.accountType,date:moment(i.date).format('DD/MMM/YYYY')})))
+        setTransactionList(r.data.map(i => ({ ...i, bname: i?.beneficiary?.name, accountType: i.account.accountType, date: moment(i.date).format('DD/MMM/YYYY') })))
       }
     }).catch(r => {
 
@@ -40,7 +40,7 @@ const Dashboard = () => {
   const gACC = () => {
     getAccounts().then(r => {
       if (r?.status === 200) {
-        setaccounts(r?.data.map(i => ({ key: i.id, title: i.accountType, balance: i.balance, icon: <DollarCircleFilled />,accountNumber:i.accountNumber })))
+        setaccounts(r?.data.map(i => ({ key: i.id, title: i.accountType, balance: i.balance, icon: <DollarCircleFilled />, accountNumber: i.accountNumber })))
       }
     }).catch(r => {
       console.log(r);
@@ -56,16 +56,16 @@ const Dashboard = () => {
     // })
   }, [])
 
-  useEffect(()=>{
-    if(accounts.length>0){
+  useEffect(() => {
+    if (accounts.length > 0) {
       setTransactionsAccountId(accounts[0].key)
     }
-  },[accounts])
-  useEffect(()=>{
-    if(accounts.length>0){
+  }, [accounts])
+  useEffect(() => {
+    if (accounts.length > 0) {
       getTransacyion()
     }
-  },[transactionsAccountId])
+  }, [transactionsAccountId])
 
   return (
     <div className='p-2 p-md-2'>
@@ -84,7 +84,7 @@ const Dashboard = () => {
                   <List.Item.Meta
                     title={item.balance}
                     avatar={item.icon}
-                    description={ <SecretView secret={item.accountNumber} extra={"AC no."}/>}
+                    description={<SecretView secret={item.accountNumber} extra={"AC no."} />}
                   />
 
                 </Card>
@@ -123,11 +123,11 @@ const Dashboard = () => {
             title={"Recents Transactions"}
             extra={<Segmented
               value={transactionsAccountId}
-              options={accounts.map(o=>({label:o.title,value:o.key,key:o.key}))}
+              options={accounts.map(o => ({ label: o.title, value: o.key, key: o.key }))}
               onChange={(value) => {
                 setTransactionsAccountId(value)
               }}
-              />}
+            />}
             styles={{ body: { padding: 0 } }}
           >
             <Table
@@ -139,7 +139,7 @@ const Dashboard = () => {
           </Card>
         </Col>
         <Col xs={24} sm={24} md={12} lg={6}>
-          <MakePayment list={beneficiarylist} accounts={accounts} cb={()=>{gACC(),getTransacyion()}}/>
+          <MakePayment list={beneficiarylist} accounts={accounts} cb={() => { gACC(), getTransacyion() }} />
         </Col>
         <Col xs={24} sm={24} md={12} lg={12}>
         </Col>
@@ -179,6 +179,9 @@ export const columns = [
     title: 'Transaction Type',
     dataIndex: 'type',
     key: 'description',
+    render: (type) => (
+      <span style={{ color: type === 'CREDIT' ? 'green' : 'red' }}>{type}</span>
+    ),
   },
   {
     title: 'Amount',
@@ -189,28 +192,28 @@ export const columns = [
 ];
 
 
-const MakePayment = ({list,accounts,cb}) => {
+const MakePayment = ({ list, accounts, cb }) => {
   const [form] = Form.useForm();
   const [loading, setloading] = useState(false)
-  const[passwordMoadal,setPasswordModal] = useState(false)
+  const [passwordMoadal, setPasswordModal] = useState(false)
   const [formData, setformData] = useState({})
-  const Transfer=async(password)=>{
+  const Transfer = async (password) => {
     setloading(true)
-    transferMoney({...form.getFieldsValue(),password}).then(r=>{
-      if(r.status==200||r.status==201){
+    transferMoney({ ...form.getFieldsValue(), password }).then(r => {
+      if (r.status == 200 || r.status == 201) {
         message.success("Money Transferred")
         form.resetFields()
         cb()
-      }else{
-        message.error(r.message)      
+      } else {
+        message.error(r.message)
       }
-    }).catch(r=>{
-      message.error(r.message)      
+    }).catch(r => {
+      message.error(r.message)
     }).finally(setloading(false))
   }
   const onFinish = (values) => {
     setPasswordModal(true)
-    setformData({...values,pname:list.filter(i=>values.beneficiaryId===i.id)[0]?.name,paccount:accounts.filter(i=>values.accountId===i.key)[0]?.accountNumber})
+    setformData({ ...values, pname: list.filter(i => values.beneficiaryId === i.id)[0]?.name, paccount: accounts.filter(i => values.accountId === i.key)[0]?.accountNumber })
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -231,7 +234,7 @@ const MakePayment = ({list,accounts,cb}) => {
         onFinishFailed={onFinishFailed}
       >
         <Form.Item label="Payee" name={"beneficiaryId"} rules={[{ required: true, message: 'Field Required' }]} >
-          <Select options={transformedData}/>
+          <Select options={transformedData} />
         </Form.Item>
         <Form.Item label="Account" name={"accountId"} rules={[{ required: true, message: 'Field Required' }]} >
           <Select options={accounts.map(item => ({
@@ -248,7 +251,7 @@ const MakePayment = ({list,accounts,cb}) => {
           </Button>
         </Form.Item>
       </Form>
-      <PasswordModal isOpen={passwordMoadal} onClose={()=>setPasswordModal(false)} onSubmit={(a)=>Transfer(a)} formData={formData} />
+      <PasswordModal isOpen={passwordMoadal} onClose={() => setPasswordModal(false)} onSubmit={(a) => Transfer(a)} formData={formData} />
     </Card>
   );
 };

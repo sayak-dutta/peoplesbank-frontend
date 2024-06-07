@@ -28,7 +28,7 @@ const MyLayout = async ({ children }) => {
 					<div className="site-layout-content">{children}</div>
 				</Content>
 			</Layout>
-			<Footer style={{ textAlign: "center" , padding:"0 0" }}> <p className="py-1"> Banking App ©2024 Created by Your Name </p></Footer>
+			<Footer style={{ textAlign: "center" , padding:"0 0" }}> <p className="py-1"> Peoples Bank ©2024 Created by Sayak Dutta </p></Footer>
 		</Layout>
 	);
 };

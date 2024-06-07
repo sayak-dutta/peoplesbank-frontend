@@ -2,12 +2,13 @@
 import { getAccounts, getTransactionByCustId } from '@/axios/apiendpoints'
 import { columns } from '@/component/page/dashboard'
 import { DollarCircleFilled } from '@ant-design/icons'
-import { Card, Col, Row, Segmented, Table } from 'antd'
+import { Card, Col, Row, Segmented, Spin, Table } from 'antd'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
 function Page() {
   const [accounts, setAccounts] = useState([])
+  const [loading, setLoading]=useState(true)
   const [transactionList, setTransactionList] = useState([])
   const [transactionsAccountId, setTransactionsAccountId] = useState(-1)
 
@@ -17,6 +18,7 @@ function Page() {
       if (r.status === 200 || r.status === 201) {
         console.log(r.data);
         setTransactionList(r.data.map(i=>({...i,bname:i?.beneficiary?.name,accountType:i.account.accountType,date:moment(i.date).format('DD/MMM/YYYY')})))
+        setLoading(false)
       }
     }).catch(r => {
 
@@ -26,13 +28,14 @@ function Page() {
     getAccounts().then(r => {
       if (r?.status === 200) {
         setAccounts([...[{key:-1,title:"ALL"}],...r?.data.map(i => ({ key: i.id, title: i.accountType, balance: i.balance, icon: <DollarCircleFilled />,accountNumber:i.accountNumber }))])
-      }
+        }
     }).catch(r => {
       console.log(r);
     })
   }
   useEffect(() => {
     gACC()
+    getTransacyion()
   }, [])
 
   useEffect(()=>{
@@ -63,7 +66,10 @@ function Page() {
               <Table
               columns={columns}
               dataSource={transactionList}
-              pagination={false} 
+              pagination={true} 
+              loading={loading}
+              
+
             />
           </Card>
         </Col>
