@@ -54,16 +54,17 @@ const items = [
     label: <NextLinkCB href="/dashboard/transactions">Transactions</NextLinkCB>,
     icon: <TransactionOutlined />, // "金を" (kin) icon for transactions (replace with a suitable icon if needed)
   },
-  {
-    key: 'settings',
-    label: <Link href="/dashboard/settings">Settings</Link>,
-    icon: <SettingOutlined />,
-  },
-  {
-    key: 'support',
-    label: <Link href="/dashboard/support">Support</Link>,
-    icon: <UsergroupAddOutlined />
-  },
+
+  // {
+  //   key: 'settings',
+  //   label: <Link href="/dashboard/settings">Settings</Link>,
+  //   icon: <SettingOutlined />,
+  // },
+  // {
+  //   key: 'support',
+  //   label: <Link href="/dashboard/support">Support</Link>,
+  //   icon: <UsergroupAddOutlined />
+  // },
   {
     key: 'logout',
     label: <Link href="#" onClick={signOut}>Log out</Link>,
@@ -80,7 +81,6 @@ const AntdMenu = () => {
       const pathSegments = pathname.split('/');
       return pathSegments[pathSegments.length - 1]; // Get the last segment
     }, [pathname]);
-    console.log(activeKey)
     
   return (
     <Menu

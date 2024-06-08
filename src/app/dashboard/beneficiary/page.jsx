@@ -53,23 +53,22 @@ function Pag() {
   const handleEdit = (e) => {
     setId(e)
     setModal(i => !i)
-    console.log('Edit beneficiary with key:', e);
 
   };
 
   const handleDelete = (key) => {
     // Implement your delete logic here, passing the key or beneficiary data
     deleteBeneficiaries(key).then(r=>{
-      console.log(r.data);
+      getBeneficery()
     })
-    console.log('Delete beneficiary with', key);
   };
 
 
   const getBeneficery = async () => {
     getBeneficiarieByCustId().then(r => {
-      console.log(r.data);
       setDataSource(r.data)
+      setOpen(false)
+      setModal(false)
     }).catch(err => {
       message.error(err?.message)
     })
@@ -89,7 +88,7 @@ function Pag() {
           <Table columns={column} dataSource={dataSource} pagination={false} />
         </Card>
         <Modal footer={null} open={open} onCancel={() => { setOpen(i => !i), setId(null) }}>
-          <AddBeneficiaryForm id={id} />
+          <AddBeneficiaryForm id={id} cb={getBeneficery} />
         </Modal>
         <Modal footer={null} open={modal} onCancel={() => { setModal(i => !i), setId(null) }}>
           <AddBeneficiaryForm cb={getBeneficery} id={id} />

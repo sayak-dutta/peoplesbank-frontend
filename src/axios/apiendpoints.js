@@ -91,10 +91,12 @@ export const createAccountsV2 = async (accounts) => {
   }
 
 }
-export const getAccounts = async () => {
+
+let oldAcc={}
+export const getAccounts = async (id=null) => {
   try {
     let user = await getSessionCache()
-    return instance(`/accounts/customer/${user.name}`).then(r => {
+    return instance(`/accounts/customer/${id?id:user.name}`).then(r => {
       return r.data
     }).catch(r => {
       return r.response.data
@@ -111,7 +113,6 @@ export const addBeneficiaries = async (accounts) => {
   try {
     let user = await getSessionCache()
     return instance.post("/beneficiaries/" + user.name, accounts).then(r => {
-      console.log(r);
       return r.data
     }).catch(r => {
       return r.response.data
@@ -149,10 +150,10 @@ export const deleteBeneficiaries = async (id) => {
   }
 }
 
-export const getBeneficiarieByCustId = async () => {
+export const getBeneficiarieByCustId = async (id=null) => {
   try {
     let user = await getSessionCache()
-    return instance("/beneficiaries/" + user.name).then(r => {
+    return instance(`/beneficiaries/${id?+id:+user.name}`).then(r => {
       return r.data
 
     }).catch(r => {
@@ -190,16 +191,47 @@ export const depositeMoney = async (amont, aid) => {
 
 }
 
+let allCs=null
+export const getAllCustomer = async () => {
+  try {
+    if(allCs){
+      return allCs
+    }
+    return instance(`/customers`).then(r => {
+      allCs = r.data
+      return r.data
+      
+    }).catch(r => {
+      return r.response.data
+    })
+  } catch (err) {
+    return { code: 0, message: err.message }
+  }
+
+}
+export const getCustomerDetail = async (id) => {
+  try {
+    return instance(`/customers/${id}`).then(r => {
+      return r.data
+
+    }).catch(r => {
+      return r.response.data
+    })
+  } catch (err) {
+    return { code: 0, message: err.message }
+  }
+
+}
+
 const cache = {}; // Object to store cached account data
 
-export const getTransactionByCustId = async (accountId, hardrefresh = false) => {
+export const getTransactionByCustId = async (accountId, hardrefresh = false,id=0) => {
   try {
     let user = await getSessionCache()
     if (!hardrefresh && cache[accountId]) {
       return cache[accountId]; // Use cached data if available and hardrefresh is false
     }
-    console.log(accountId);
-    const response = await instance(accountId===-1?`/transactions/customer/${user.name}`:"/transactions/account/" + accountId).then(r => {
+    const response = await instance(accountId===-1?`/transactions/customer/${id?id:user?.name}`:"/transactions/account/" + accountId).then(r => {
       return r.data;
     }).catch(r => {
       return r.response.data;
