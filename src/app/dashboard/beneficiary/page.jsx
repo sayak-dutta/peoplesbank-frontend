@@ -85,7 +85,7 @@ function Pag() {
           extra={<Button onClick={() => setOpen(i => !i)} type='default'>Add Beneficiary</Button>}
           styles={{ body: { padding: 0 } }}
         >
-          <Table columns={column} dataSource={dataSource} pagination={false} />
+          <Table scroll={{x:"100%"}} columns={column} dataSource={dataSource} pagination={false} />
         </Card>
         <Modal footer={null} open={open} onCancel={() => { setOpen(i => !i), setId(null) }}>
           <AddBeneficiaryForm id={id} cb={getBeneficery} />

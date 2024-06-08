@@ -51,7 +51,7 @@ const AccountTable = ({ id }) => {
   }, []); // Empty dependency array to run only once
 
   return (
-    <Table dataSource={tableData} columns={columns} rowKey="id" pagination={false} />
+    <Table scroll={{x:"100%"}} dataSource={tableData} columns={columns} rowKey="id" pagination={false} />
   );
 };
 

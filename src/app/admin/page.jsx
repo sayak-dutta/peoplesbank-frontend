@@ -115,7 +115,7 @@ const MyTable = () => {
         extra={<Button onClick={logout} icon={<LogoutOutlined/>} />}
     >
         
-        <Table dataSource={data} loading={loading} columns={columns} pagination={{ pageSize: 10 }} />
+        <Table scroll={{x:"100%"}} dataSource={data} loading={loading} columns={columns} pagination={{ pageSize: 10 }} />
         <div className="position-absolute bottom-0 col-12 bg-secondary-subtle py-2">
             <h5 className='text-center'>Welcome Admin</h5>
         </div>

@@ -57,7 +57,7 @@ function BeneficeryTable({id}) {
     }, [id])
   
     return (
-            <Table columns={column} dataSource={dataSource} pagination={false} />
+            <Table scroll={{x:"100%"}} columns={column} dataSource={dataSource} pagination={false} />
     )
   }
   
