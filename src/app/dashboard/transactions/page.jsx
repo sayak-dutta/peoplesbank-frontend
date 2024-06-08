@@ -64,6 +64,7 @@ function Page() {
                 />}
           >
               <Table
+              scroll={{x:"100%"}}
               columns={columns}
               dataSource={transactionList}
               pagination={true} 

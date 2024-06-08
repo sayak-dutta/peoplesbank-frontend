@@ -41,6 +41,7 @@ const Dashboard = () => {
     getAccounts().then(r => {
       if (r?.status === 200) {
         setaccounts(r?.data.map(i => ({ key: i.id, title: i.accountType, balance: i.balance, icon: <DollarCircleFilled />, accountNumber: i.accountNumber })))
+        getTransacyion(true)
       }
     }).catch(r => {
       console.log(r);
@@ -49,11 +50,6 @@ const Dashboard = () => {
   useEffect(() => {
     gACC()
     getBeneficiary()
-    // getSession().then(r=>{
-    //   console.log(r);
-    // }).catch(r=>{
-    //   console.log(r);
-    // })
   }, [])
 
   useEffect(() => {
@@ -134,6 +130,7 @@ const Dashboard = () => {
               columns={columns}
               dataSource={transactionList}
               pagination={false}
+              scroll={{x:"100%"}}
             />
 
           </Card>

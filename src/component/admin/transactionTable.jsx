@@ -27,6 +27,7 @@ function TransactionTable({id}) {
 
   return (
               <Table
+              scroll={{x:"100%"}}
               columns={columns}
               dataSource={transactionList}
               loading={loading}
